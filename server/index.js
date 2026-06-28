@@ -10,6 +10,9 @@ const app = express()
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 
+app.set('etag', false)
+app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next() })
+
 const PORT = process.env.PORT || 3001
 const HISTORY_LEN = 60
 
@@ -108,7 +111,7 @@ app.get('/api/metrics', (_req, res) => {
 
 app.get('/api/pm2', async (_req, res) => {
   try {
-    const { stdout } = await execAsync('pm2 jlist')
+    const { stdout } = await execAsync('pm2 jlist', { windowsHide: true })
     const procs = JSON.parse(stdout).map(p => ({
       id: p.pm_id,
       name: p.name,

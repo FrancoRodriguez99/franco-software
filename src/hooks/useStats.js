@@ -26,7 +26,8 @@ export function useStats() {
       try {
         const data = await fetchJSON('/api/metrics')
         if (mounted.current) { setMetrics(data); setServerOnline(true) }
-      } catch {
+      } catch (e) {
+        console.warn('[useStats] metrics fetch failed:', e.message)
         if (mounted.current) setServerOnline(false)
       }
     }
