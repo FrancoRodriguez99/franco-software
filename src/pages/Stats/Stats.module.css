@@ -1,0 +1,457 @@
+.page {
+  min-height: calc(100vh - 56px - 56px);
+  padding: 3rem 2rem;
+}
+
+/* ── header ──────────────────────────────────────────────── */
+
+.pageHeader {
+  max-width: 1200px;
+  margin: 0 auto 2.5rem;
+  animation: slide-up 0.5s ease both;
+}
+
+.headerLabel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.pageTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: var(--accent-glow);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+
+.pageSubtitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.apiDown {
+  color: var(--red);
+}
+
+/* ── grid ────────────────────────────────────────────────── */
+
+.grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+/* ── panel base ──────────────────────────────────────────── */
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  padding: 1.5rem;
+  box-shadow: var(--accent-glow), inset 0 0 30px rgba(0, 245, 255, 0.015);
+  animation: fade-in 0.6s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.panelLabel {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* ── grid assignments ────────────────────────────────────── */
+
+.panelCpuLive  { grid-column: 1; }
+.panelRamLive  { grid-column: 2; }
+.panelNetLive  { grid-column: 3; }
+.panelCpuChart { grid-column: 1 / 4; grid-row: 2; }
+.panelRamChart { grid-column: 1 / 3; grid-row: 3; }
+.panelPm2      { grid-column: 3;     grid-row: 3; }
+.panelNetChart { grid-column: 1 / 3; grid-row: 4; }
+.panelMongo    { grid-column: 3;     grid-row: 4; }
+
+/* ── gauge card ──────────────────────────────────────────── */
+
+.gauge {
+  flex-shrink: 0;
+}
+
+.gaugeRow {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.gaugeMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/* ── network live card ───────────────────────────────────── */
+
+.netLiveWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.75rem 0;
+}
+
+.netStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.netArrow {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.netNum {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-shadow: 0 0 16px currentColor;
+}
+
+.netUnit {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+
+.netDivider {
+  width: 1px;
+  height: 48px;
+  background: var(--accent-border);
+}
+
+.netNote {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+/* ── shared meta items ───────────────────────────────────── */
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.06);
+}
+
+.metaKey {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.metaVal {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+}
+
+/* ── chart ───────────────────────────────────────────────── */
+
+.chartWrap {
+  margin-top: 0.25rem;
+}
+
+/* ── tooltip ─────────────────────────────────────────────── */
+
+.tooltip {
+  background: rgba(8, 15, 31, 0.95);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-primary);
+  box-shadow: var(--accent-glow);
+}
+
+.ttLabel {
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+/* ── legend ──────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  justify-content: flex-end;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+}
+
+.legendDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+/* ── PM2 list ────────────────────────────────────────────── */
+
+.pm2List {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pm2Row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  background: rgba(0, 245, 255, 0.03);
+  border: 1px solid rgba(0, 245, 255, 0.08);
+  border-radius: 3px;
+}
+
+.pm2Dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.pm2Info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pm2Name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm2Sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+}
+
+.pm2Stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.pm2Stat {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.pm2StatLabel {
+  color: var(--text-muted);
+  font-size: 0.55rem;
+}
+
+/* ── status text ─────────────────────────────────────────── */
+
+.statusBig {
+  margin-bottom: 0.75rem;
+}
+
+.statusOnline {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+  letter-spacing: 0.08em;
+}
+
+.statusOffline {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--red);
+  text-shadow: 0 0 12px rgba(255, 56, 96, 0.6);
+  letter-spacing: 0.08em;
+}
+
+/* ── MongoDB collections ─────────────────────────────────── */
+
+.collectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.collRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  background: rgba(0, 245, 255, 0.03);
+  border: 1px solid rgba(0, 245, 255, 0.07);
+  border-radius: 3px;
+}
+
+.collInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.collDb {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+}
+
+.collName {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collCount {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+/* ── Caddy row ───────────────────────────────────────────── */
+
+.caddyRow {
+  display: flex;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 245, 255, 0.08);
+}
+
+/* ── offline overlay ─────────────────────────────────────── */
+
+.offline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.offlineIcon {
+  font-size: 1.5rem;
+  color: var(--red);
+}
+
+.loading {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  padding: 1rem 0;
+  text-align: center;
+}
+
+/* ── responsive ──────────────────────────────────────────── */
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .panelCpuLive  { grid-column: 1; }
+  .panelRamLive  { grid-column: 2; }
+  .panelNetLive  { grid-column: 1 / 3; }
+  .panelCpuChart { grid-column: 1 / 3; }
+  .panelRamChart { grid-column: 1 / 3; }
+  .panelPm2      { grid-column: 1 / 3; grid-row: auto; }
+  .panelNetChart { grid-column: 1 / 3; }
+  .panelMongo    { grid-column: 1 / 3; }
+}
+
+@media (max-width: 600px) {
+  .page { padding: 2rem 1rem; }
+  .grid { grid-template-columns: 1fr; }
+  .panelCpuLive,
+  .panelRamLive,
+  .panelNetLive,
+  .panelCpuChart,
+  .panelRamChart,
+  .panelPm2,
+  .panelNetChart,
+  .panelMongo {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

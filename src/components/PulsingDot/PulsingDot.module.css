@@ -1,0 +1,42 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.cyan {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent), 0 0 12px rgba(0, 245, 255, 0.5);
+}
+
+.green {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green), 0 0 12px rgba(0, 255, 136, 0.5);
+}
+
+.red {
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red), 0 0 12px rgba(255, 56, 96, 0.5);
+  animation-duration: 0.8s;
+}
+
+.yellow {
+  background: var(--yellow);
+  box-shadow: 0 0 6px var(--yellow), 0 0 12px rgba(255, 204, 0, 0.5);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

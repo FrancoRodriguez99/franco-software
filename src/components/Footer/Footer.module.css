@@ -1,0 +1,13 @@
+.footer {
+  padding: 1.25rem 2rem;
+  border-top: 1px solid var(--accent-border);
+  background: rgba(5, 10, 20, 0.9);
+  text-align: center;
+}
+
+.text {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
