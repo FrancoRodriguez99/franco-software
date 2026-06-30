@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
+import tracker from './analytics.js'
+
+tracker.init()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

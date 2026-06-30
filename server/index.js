@@ -4,6 +4,11 @@ import si from 'systeminformation'
 import mongoose from 'mongoose'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import jwt from 'jsonwebtoken'
+
+const ANALYTICS_PASSWORD = 'olakase852'
+const JWT_SECRET = 'fr-analytics-9x4mKpQ2wLzT8nVjYsE1bUhC'
+const JWT_EXPIRES = '12h'
 
 const execAsync = promisify(exec)
 const app = express()
@@ -164,6 +169,132 @@ app.get('/api/caddy', async (_req, res) => {
     res.json({ running: r.ok })
   } catch {
     res.json({ running: false })
+  }
+})
+
+// ── analytics ───────────────────────────────────────────────────────────────
+
+const aSessionSchema = new mongoose.Schema({
+  sid:         { type: String, index: true, unique: true },
+  vid:         { type: String, index: true },
+  ip:          String,
+  botScore:    Number,
+  botSignals:  [String],
+  isBot:       Boolean,
+  mouseMoved:  { type: Boolean, default: false },
+  userAgent:   String,
+  language:    String,
+  timezone:    String,
+  screenW:     Number,
+  screenH:     Number,
+  deviceType:  String,
+  colorScheme: String,
+  referrer:    String,
+  isReturning: Boolean,
+  startedAt:   { type: Date, default: Date.now },
+  lastActiveAt:{ type: Date, default: Date.now },
+  pageCount:   { type: Number, default: 0 },
+  eventCount:  { type: Number, default: 0 },
+}, { collection: 'analytics_sessions', versionKey: false })
+
+const aEventSchema = new mongoose.Schema({
+  sid:  String,
+  vid:  String,
+  type: String,
+  ts:   Date,
+  page: String,
+  data: mongoose.Schema.Types.Mixed,
+}, { collection: 'analytics_events', versionKey: false })
+
+const ASession = mongoose.model('ASession', aSessionSchema)
+const AEvent   = mongoose.model('AEvent',   aEventSchema)
+
+app.post('/api/analytics/auth', (req, res) => {
+  const { password } = req.body
+  if (password !== ANALYTICS_PASSWORD) {
+    return res.status(401).json({ ok: false, error: 'invalid password' })
+  }
+  const token = jwt.sign({ role: 'analytics' }, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+  res.json({ ok: true, token })
+})
+
+function requireToken(req, res, next) {
+  const auth = req.headers.authorization
+  if (!auth?.startsWith('Bearer ')) return res.status(401).json({ ok: false })
+  try {
+    jwt.verify(auth.slice(7), JWT_SECRET)
+    next()
+  } catch {
+    res.status(401).json({ ok: false, error: 'token expired' })
+  }
+}
+
+app.get('/api/analytics/data', requireToken, async (req, res) => {
+  if (!mongoConnected) return res.json({ ok: false, sessions: [], total: 0 })
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 50, 200)
+    const skip  = parseInt(req.query.skip) || 0
+
+    const [sessions, total] = await Promise.all([
+      ASession.find().sort({ startedAt: -1 }).skip(skip).limit(limit).lean(),
+      ASession.countDocuments(),
+    ])
+
+    const sids = sessions.map(s => s.sid)
+    const events = await AEvent.find({ sid: { $in: sids } }).sort({ ts: 1 }).lean()
+
+    const bySession = {}
+    for (const e of events) {
+      if (!bySession[e.sid]) bySession[e.sid] = []
+      bySession[e.sid].push(e)
+    }
+
+    res.json({
+      ok: true,
+      total,
+      sessions: sessions.map(s => ({ ...s, events: bySession[s.sid] || [] })),
+    })
+  } catch (e) {
+    console.error('analytics/data error:', e.message)
+    res.json({ ok: false, sessions: [], total: 0 })
+  }
+})
+
+app.post('/api/vitals', async (req, res) => {
+  // always ack immediately so the browser is never blocked
+  res.json({ ok: true })
+  if (!mongoConnected) return
+
+  try {
+    const { sid, vid, session, mouseMoved, events = [] } = req.body
+    if (!sid) return
+
+    const ip = [
+      req.headers['x-forwarded-for'],
+      req.headers['x-real-ip'],
+      req.socket?.remoteAddress,
+    ].find(Boolean)?.split(',')[0].trim() ?? ''
+
+    const pvCount = events.filter(e => e.type === 'pageview').length
+    const inc = { eventCount: events.length }
+    if (pvCount > 0) inc.pageCount = pvCount
+
+    const update = {
+      $set: { lastActiveAt: new Date(), mouseMoved: Boolean(mouseMoved) },
+      $inc: inc,
+    }
+    if (session) {
+      update.$setOnInsert = { ...session, sid, vid, ip, startedAt: new Date() }
+    }
+
+    await Promise.all([
+      ASession.findOneAndUpdate({ sid }, update, { upsert: true }),
+      events.length
+        ? AEvent.insertMany(events.map(e => ({ ...e, sid, vid, ts: new Date(e.ts) })))
+        : Promise.resolve(),
+    ])
+  } catch (e) {
+    console.error('analytics error:', e.message)
   }
 })
 
