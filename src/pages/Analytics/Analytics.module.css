@@ -183,6 +183,10 @@
   margin-top: 0.35rem;
 }
 
+.hiddenMe {
+  color: var(--text-muted);
+}
+
 /* ── stats bar ───────────────────────────────────────────────────────────── */
 
 .statsBar {

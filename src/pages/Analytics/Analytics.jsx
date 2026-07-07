@@ -220,6 +220,8 @@ function Dashboard({ onExpired }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('humans')
+  const [hideSelf, setHideSelf] = useState(true)
+  const myVid = localStorage.getItem('frs_vid')
 
   function load() {
     setLoading(true)
@@ -238,7 +240,11 @@ function Dashboard({ onExpired }) {
 
   useEffect(() => { load() }, [])
 
-  const sessions = data?.sessions ?? []
+  const allSessions = data?.sessions ?? []
+  const mySessions = allSessions.filter(s => myVid && s.vid === myVid)
+  const sessions = hideSelf && myVid
+    ? allSessions.filter(s => s.vid !== myVid)
+    : allSessions
   const humans = sessions.filter(s => !s.isBot)
   const bots = sessions.filter(s => s.isBot)
   const returning = humans.filter(s => s.isReturning)
@@ -260,7 +266,10 @@ function Dashboard({ onExpired }) {
           <button className={styles.refreshBtn} onClick={onExpired}>[ logout ]</button>
         </div>
         <p className={styles.pageSub}>
-          showing last {sessions.length} sessions · {data?.total ?? '—'} total recorded
+          showing {sessions.length} sessions · {data?.total ?? '—'} total recorded
+          {hideSelf && mySessions.length > 0 && (
+            <span className={styles.hiddenMe}> · {mySessions.length} of yours hidden</span>
+          )}
         </p>
       </div>
 
@@ -282,6 +291,15 @@ function Dashboard({ onExpired }) {
             [ {f} ]
           </button>
         ))}
+        {myVid && (
+          <button
+            className={styles.filterBtn}
+            data-active={hideSelf}
+            onClick={() => setHideSelf(v => !v)}
+          >
+            [ {hideSelf ? 'hiding me' : 'show me'} ]
+          </button>
+        )}
       </div>
 
       <div className={styles.list}>
